@@ -1,0 +1,433 @@
+Q1. what are arrays in JS and how it is different from other programming languages?
+
+An array in JavaScript is a special type of object used to store multiple values in a single variable.
+Each value (called an element) has an index, starting from 0.
+
+ex:let fruits = ['apple', 'banana', 'cherry'];
+   console.log(fruits[0]); // 'apple'
+
+
+Key Features of JavaScript Arrays
+
+1) Dynamic in size — you can add or remove elements anytime.
+
+2) Heterogeneous in Nature-Can store different data types together as an single array
+Ex: let mixed = [10, 'apple', true, { name: 'John' }];
+
+3) Zero-based index — first element is at index 0.
+
+4) Internally objects — JS arrays are not fixed memory blocks like in C/C++/Java.
+
+5) Provides built-in methods like push(), pop(),shift(), unshift(), forEach(),map(), filter(), reduce()etc.
+
+push() is used add 1 or more elements to the end of the Array.
+EX:fruits.push("mango","dragon","grapes")
+o/p:[ 'apple', 'banana', 'cherry', 'mango', 'dragon', 'grapes' ]
+
+pop() is used to remove only one element from the end of an array
+Ex: fruits.pop()
+o/p:[ 'apple', 'banana', 'cherry', 'mango', 'dragon' ]
+
+shift() is used remove only one element from the start of the array
+EX: fruits.shift()
+o/p: ['banana', 'cherry', 'mango', 'dragon']
+
+unshift() is used to add 1 or more elements at the beginning of the Aray
+unshift.fruits("x","Y","z")
+o/p:['x','y','Z'banana','cherry', 'mango','dragon']
+
+
+forEach() is Looping through every element to perform an action, doesnot return new array
+Ex:fruits.forEach(fruit => {
+  console.log("I like", fruit);
+});
+
+o/p:
+I like banana
+I like cherry
+I like mango
+I like dragon
+
+
+map() trasforms each item and get a new array,
+where each element is modified
+let numbers = [1, 2, 3];
+let doubled = numbers.map(num => num * 2);
+console.log(doubled); 
+o/p: [2, 4, 6]
+
+filter() Keeps only what passes a test,used for selecting elements that meet a condition and returns a new filtered array
+EX:let numbers = [1, 2, 3, 4, 5];
+let evenNumbers = numbers.filter(num => num % 2 === 0);
+console.log(evenNumbers); 
+o/p: [2, 4]
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q2: What is the difference between slice() and splice()
+
+slice() → Non-destructive (does NOT change original)
+Used to copy or extract a portion of an array without changing the original array.
+
+Example:
+
+const fruits = ['apple', 'banana', 'cherry', 'date'];
+const sliced = fruits.slice(1, 3);
+console.log(sliced); // ['banana', 'cherry']
+console.log(fruits); // ['apple', 'banana', 'cherry', 'date']  (unchanged)
+
+The slice() method is used when you want to take out a part of an array and make a new smaller array from it.
+It does not remove or change anything in the original array — it just copies the selected elements based on the start and end positions you give
+
+Original array,["apple", "banana", "cherry", "date"] from starting array,
+slice(1,3)-takes elements from index 1 → up to 3 (not including 3)
+
+
+splice() → Destructive (changes original array)
+
+Example:
+
+const fruits = ['apple', 'banana', 'cherry', 'date'];
+const spliced = fruits.splice(1, 2, 'grape', 'mango');
+console.log(spliced); // ['banana', 'cherry'] (removed items)
+console.log(fruits);  // ['apple', 'grape', 'mango', 'date'] (modified array)
+
+
+✅ First argument = start index
+✅ Second argument = number of elements to remove
+✅ You can also add new items in their place
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q3. what are locators and what are the different types of locators that can be used in playwright automation?
+
+A locator is a way to find and interact with elements (like buttons, text boxes, or links) on a webpage.
+Playwright supports many types of locators — mainly CSS, XPath, and Playwright built-in locators.
+
+✅  CSS locators
+----------------
+
+1) Used to find elements based on HTML tags, classes, IDs, or attributes.
+
+2) Syntax:
+page.locator('css selector')
+
+3) Examples:
+
+await page.locator('#username').fill('Gauthami');      // by ID
+await page.locator('.login-button').click();           // by Class
+await page.locator('input[name="email"]').fill('test@test.com'); // by attribute
+await page.locator('button').click();                  // by tag name
+
+4) Easy to use and fastest locator type.
+
+
+✅  Xpath(Basic and Advanced)
+-----------------------------
+
+1) XPath helps you find elements based on their position or relationship in the HTML tree.
+It can move up, down, or across elements.
+
+2) Syntax:
+page.locator('//tagname[@attribute="value"]')
+
+3) Basic Xpath examples:
+
+await page.locator('//input[@id="username"]').fill('Gauthami');  
+await page.locator('//button[text()="Login"]').click();
+
+4) Advanced Xpath examples: 
+await page.locator('//div[@class="form"]//input[@type="text"]'); // nested element
+await page.locator('(//a)[3]').click(); // click the 3rd link
+await page.locator('//label[contains(text(),"Email")]/following::input[1]').fill('test@test.com');
+
+5) Very flexible, works when CSS is not enough.
+
+
+✅ Playwright locators
+----------------------
+
+1) Playwright provides special locator methods that are easier and more human-friendly.
+These are smart and automatically wait for the element to be ready.
+
+2) Syntax:
+page.getByRole()
+page.getByText()
+page.getByLabel()
+page.getByPlaceholder()
+page.getByAltText()
+page.getByTitle()
+
+3) Examples
+
+await page.getByRole('button', { name: 'Login' }).click();
+await page.getByText('Submit').click();
+await page.getByLabel('Email').fill('test@test.com');
+await page.getByPlaceholder('Enter password').fill('Secret123');
+await page.getByAltText('Company Logo').click();
+
+4) Best for modern testing — readable, reliable, and automatically waits for elements.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4. What are dropdowns and how do we handle it in playwright?
+
+A dropdown (or select menu) is a UI element that allows the user to choose one or more options from a list.
+There are two main types of dropdowns in web applications:
+
+1. Standard / Native Dropdown
+
+A Standard (or Native) Dropdown is a dropdown list created using the HTML <select> tag and its child <option> elements.
+It is called native because it’s a built-in browser control — handled directly by the browser’s rendering engine, not by JavaScript or CSS styling.
+
+Ex:<select id="country">
+  <option value="IN">India</option>
+  <option value="US">United States</option>
+  <option value="UK">United Kingdom</option>
+</select>
+
+how to handle using build-in methods
+------------------------------------
+
+1) await page.locator('#country').selectOption('IN');
+2) await page.selectOption('#country', 'IN');
+
+Key Features:
+------------
+
+Uses native HTML elements (<select>, <option>).
+Fully supported by browsers (no JavaScript required).
+Easy to automate with Playwright’s selectOption().
+Supports value, label, and index attributes.
+
+1) By value attribute:
+-------------------
+The value is the hidden attribute inside the <option> tag.
+Playwright uses this when you provide a string.
+
+await page.locator('#country').selectOption('US');
+
+this seletcs:
+<option value="US">United States</option>
+
+2)By label (visible text)
+-------------------------
+
+The label refers to the display text that users see in the dropdown.
+
+await page.locator('#country').selectOption({ label: 'United Kingdom' });
+
+this selects:
+<option value="UK">United Kingdom</option>
+
+3) By index (position in the list)
+----------------------------------
+
+The index represents the zero-based position of the option.
+
+await page.locator('#country').selectOption({ index: 0 });
+
+this selects:
+<option value="IN">India</option>
+
+priority among the 3 options
+----------------------------
+
+Priority1: Value
+Priority2: label/visible text
+Priority3: index
+
+why value is given first priority
+---------------------------------
+
+In a standard HTML form, the <option>’s value is what actually gets sent to the server when a form is submitted — not the visible text.
+
+If a user selects “United States”,
+the browser actually sends → country=US
+-----------------------------------------------------------------------------------------------------------
+
+2.Custom / Dynamic Dropdown 
+
+Handling Custom Dropdowns (Built with <div> or <ul>)
+
+Example:
+<div class="dropdown">
+  <div class="option">India</div>
+  <div class="option">USA</div>
+  <div class="option">UK</div>
+</div>
+
+//open the dropdown
+await page.locator('.dropdown').click();
+
+//select the desired option
+await page.locator('.option', { hasText: 'USA' }).click();
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q5: How would you select a dropdown option that becomes visible only after hovering over another element?
+
+await page.locator('#menu').hover(); // Hover to reveal dropdown
+await page.locator('.dropdown-item', { hasText: 'Option 1' }).click();
+```
+
+**Explanation:**
+Use `.hover()` first, then click the visible option.
+
+ex: Myntra
+import {test} from "@playwright/test"
+test(`hover in dropdown`,async ({page})=> {
+    await page.goto("https://www.myntra.com")
+    await page.hover('a[data-group="men"]');
+    await page.click('//a[text()="Sweaters"]')
+})
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6: How do you handle a dropdown that closes or disappears immediately after clicking it?
+
+When a dropdown disappears on click, it usually means it’s a custom JavaScript-based menu that closes when the element loses focus or when you move your mouse.
+
+When the dropdown disappears too fast to inspect it:
+Use Chrome DevTools → Elements tab → Pause on debugger.
+Open DevTools → click Sources → “Pause on DOM mutations” (the ⏸️ icon).
+Then click the dropdown — DevTools will freeze when it changes (so it doesn’t disappear)
+
+setTimeout(()=>{debugger;},4000)-freeze the DOM
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. What is the difference of using click() on an option vs `selectOption()`? When should you choose one over the other?
+
+'click()` is used for **custom dropdowns** (built with `<ul>/<div>`)
+`selectOption()` is for **native `<select>`** only
+
+✅ Use `.click()` for modern styled dropdowns
+✅ Use `selectOption()` for traditional forms
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8. What is TypeScript and how is it different from JavaScript?
+
+1️) TypeScript is a superset of JavaScript that adds type checking features.
+   JavaScript is a scripting language mainly used to make web pages interactive.
+
+2) TypeScript supports static typing — you declare types before running the code.
+   JavaScript uses dynamic typing — types are decided while the code runs.
+
+3) TypeScript catches errors during compilation, before the program runs.
+   JavaScript finds errors only at runtime, when the program is executing.
+
+4) TypeScript code must be compiled (transpiled) into JavaScript to run in a browser.
+   JavaScript runs directly in browsers or Node.js without compilation.
+
+5) TypeScript provides better code safety because of strict type checking.
+   JavaScript is less safe since it allows type mistakes during execution.
+
+6) TypeScript gives better editor support — autocompletion, IntelliSense, and hints.
+   JavaScript has limited editor support for such advanced features.
+
+7) TypeScript is better for large projects where code maintenance matters.
+   JavaScript suits smaller or quick prototype projects.
+
+8) TypeScript files have .ts extension.
+   JavaScript files have .js extension.
+
+9) TypeScript was developed by Microsoft in 2012.
+   JavaScript was developed by Netscape in 1995.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9. What is type inference in TypeScript?
+
+Type inference means that TypeScript automatically understands the data type of a variable — even if you don’t explicitly mention it.
+
+Implicit inference
+------------------
+
+Implicit Type inference is like TypeScript being smart enough to guess the type of a variable based on the value you give it.
+
+let city = "Chennai";   // inferred as string
+let count = 100;        // inferred as number
+let isActive = true;    // inferred as boolean
+
+explicit inference
+------------------
+
+You manually tell TypeScript what the variable type is
+
+ex: let age: number = 25;
+    let name: string = "Gauthami"; 
+
+Both means that name and city are strings —
+the only difference is who defines the type:
+
+In explicit typing → you define it to be number/string only.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. What are assertions in Playwright and what are its types?
+
+Assertions in Playwright are the checks/validations used to confirm that your application is behaving correctly.
+
+Playwright mainly supports four logical categories of assertions, they verify
+
+An element exists
+A value is correct
+A page has navigated properly
+A property or attribute matches expectation
+If an assertion fails, Playwright throws an error and fails the test.
+
+
+1. Generic Assertions:
+----------------------
+
+Generic assertions are Non retry assertions, used to verify the text, URL and values, work on page-level (NOT on elements).
+
+✅ Generic Assertions include
+
+✔ toHaveURL()
+✔ toHaveTitle()
+
+These two are generic assertions because they are applied on page:
+
+await expect(page).toHaveURL('/dashboard');
+await expect(page).toHaveTitle('Home');
+
+
+2. Locator assertions:
+---------------------
+Locator assertions are retry assertions , they work only with locators() because they require a specific element locator.
+Playwright uses auto-wait for assertions, it waits until the condition becomes true (default timeout 5 seconds).
+
+
+✅ Locator Assertions include
+
+toBeVisible()	Checks element visibility
+toHaveText()	Checks element text
+toHaveValue()	Checks input value
+toHaveAttribute()Checks element attributes
+toHaveCount()	Checks number of elements
+toBeChecked()	Checks checkbox/radio
+
+
+
+3️. Hard Assertions
+------------------
+
+Fail the test immediately when the assertion fails
+
+Example:
+await expect(page.locator('#login')).toBeVisible();
+
+4. Soft Assertions
+------------------
+
+Even if the assertion fails, the test continues.
+Failures are shown at the end.
+
+Example:
+await expect.soft(page.locator('#title')).toHaveText('Welcome');
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
