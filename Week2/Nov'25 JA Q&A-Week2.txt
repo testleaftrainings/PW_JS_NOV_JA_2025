@@ -1,0 +1,430 @@
+Q1. What are looping statements and what are its types?
+
+Looping statements are used to run a block of code repeatedly until a condition becomes false or
+Instead of writing the same line of code many times, you write it once and loop it.
+
+for loop
+---------
+
+
+Used when you know how many times you want to run the loop.
+
+✔ Example
+for (let i = 1; i <= 5; i++) {
+  console.log("Number:", i);
+}
+
+✔ Output
+Number: 1
+Number: 2
+Number: 3
+Number: 4
+Number: 5
+
+
+while loop
+----------
+
+Used when you don’t know the number of iterations in advance — you loop until condition becomes false.
+
+✔ Example
+let count = 1;
+
+while (count <= 3) {
+  console.log("Count:", count);
+  count++;
+}
+
+
+do…while loop
+-------------
+
+Used when you want to run the code at least once, even if the condition is false.
+
+let num = 5;
+
+do {
+  console.log("Value:", num);
+  num++;
+} while (num < 5);
+
+Even though num < 5 is already false, the loop runs one time.
+
+
+for…of loop
+-----------
+
+Used to iterate values in arrays, lists, or strings.
+
+✔ Example
+const colors = ["red", "green", "blue"];
+
+for (const c of colors) {
+  console.log(c);
+}
+
+
+for…in loop
+-----------
+
+Used to iterate keys (properties) of an object.
+
+✔ Example
+const person = {
+  name: "Gauthami",
+  age: 25
+};
+
+for (const key in person) {
+  console.log(key, "=", person[key]);
+}
+
+✔ Output
+name = Gauthami
+age = 25
+
+
+
+const person = {
+  name: "Gauthami",
+  age: 25
+};
+
+------------------------------------------- 
+
+🔹 Line 1–4 Explanation
+
+const person = { ... }
+You are creating an object called person.
+
+It has two properties:
+
+name with value "Gauthami"
+age with value 25
+
+So the object looks like:
+person.name → "Gauthami"
+person.age  → 25
+
+for (const key in person) {
+
+🔹 What this line means
+This is a for…in loop, used to iterate over keys (property names) in an object.
+
+key will take values name and age (one at a time).
+
+So the loop runs two times:
+
+Iteration	key
+1	      "name"
+2	      "age"
+
+
+console.log(key, "=", person[key]);
+}
+
+🔹 Why we use key = person[key] here?
+This is the most important part.
+
+key contains the property name in string form.
+Example:
+
+First loop → key = "name"
+
+Second loop → key = "age"
+
+person[key] means:
+“Get the value from the person object using this key.”
+
+So:
+
+When key = "name" → person["name"] → "Gauthami"
+When key = "age" → person["age"] → 25
+
+🔹 What gets printed?
+First run:
+
+name = Gauthami
+Second run:
+
+age = 25
+⭐ Why do we write person[key] instead of person.key?
+Because:
+
+person.key looks for a property literally named "key", which doesn’t exist.
+person[key] uses the value stored in the variable key.
+
+This is called dynamic property access.
+
+One-Line Summary for Each Loop
+------------------------------
+
+Loop Type	Use Case
+---------       --------
+
+for	        Known number of iterations
+while	        Continue until condition becomes false
+do…while	Run once → then check condition
+for…of	        Iterate values in array/string
+for…in	        Iterate keys in objects
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. What is the difference between conditional and looping statements?
+
+🔹 Conditional Statements
+
+Purpose: To make decisions in the code based on a condition 
+Execution: Execute a block of code only if a condition is true.
+Examples: if, if...else, switch.
+
+Example:
+
+let age = 18;
+if (age >= 18) {
+  console.log("Eligible to vote");
+} else {
+  console.log("Not eligible to vote");
+}
+
+🔹 Looping Statements
+
+Purpose: Used to repeat a block of code multiple times or until a condition is false
+Continue execution until a condition becomes false.
+Examples: for, while, do...while
+
+Example:
+
+for (let i = 1; i <= 5; i++) {
+  console.log("Number:", i);
+}
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q3. What is the difference between String literal and string objects?
+
+String literal
+--------------
+
+let a = "hello";
+let b = "hello";
+
+console.log(a === b);  // true
+Both are primitive strings, so comparison checks value.
+
+
+✔ String Object
+-----------------
+
+let x = new String("hello");
+let y = new String("hello");
+
+console.log(x === y);  // false
+
+
+Even though the content is the same:
+x and y are different objects
+
+Comparison checks reference, not value
+So it's false.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q4. What are the different types of functions in JavaScript?
+
+🔹 1. Function Declaration / Named Function
+
+Defined with the function keyword and has a name.
+Can be called before or after declaration (because of hoisting).
+
+function greet() {
+  console.log("Hello, World!");
+}
+greet(); // Hello, World!
+
+🔹 2. Function Expression
+
+A function assigned to a variable.
+Not hoisted — can only be called after it’s defined.
+
+const greet = function() {
+  console.log("Hello from function expression");
+};
+greet();
+
+🔹 3. Arrow Function (ES6)
+
+A shorter syntax, commonly used in modern JS.
+Does not have its own this.
+
+const greet = () => {
+  console.log("Hello from arrow function");
+};
+greet();
+
+🔹 4. Anonymous Function
+
+A function without a name.
+Usually used as arguments to other functions (callbacks).
+
+setTimeout(function() {
+  console.log("This is an anonymous function");
+}, 1000);
+
+
+
+A callback function is simply a function that is passed as an argument to another function and is executed later (after some operation is done).
+
+a) Simple Callback Function
+------------------------
+
+
+function downloadMovie(callback) {
+  console.log("Downloading movie");
+  setTimeout(() => {
+    console.log("Movie downloaded");
+    callback(); // <-- call the function we were given
+  }, 2000);
+}
+
+function playMovie() {
+  console.log("Playing movie");
+}
+
+downloadMovie(playMovie);
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5. What protocol is used in playwright?
+
+Playwright uses the **Chrome DevTools Protocol (CDP)** and also supports its own **WebSocket-based protocol** to communicate with browsers like Chromium, Firefox, and WebKit.
+follow up question --> what is websocket protocol?
+
+WebSocket is a communication protocol that provides full-duplex (two-way) communication between a client (browser) and a server over a single TCP connection.
+---------
+🔍 Key Points (for Interviews):
+-------------------------------
+
+Unlike HTTP (which is request-response and one-way), WebSockets allow real-time, two-way communication.
+
+Ideal for apps like chat, live notifications, stock updates, or collaborative tools.
+
+WebSocket connections remain open, unlike HTTP which closes after each request.
+
+✅ Real-life Example:
+
+In Playwright, when you launch a browser, it communicates with the test runner using WebSocket, allowing commands to be sent and events to be received live.
+----------------------------------------------
+Playwright uses the Chrome DevTools Protocol (CDP) (also called DevTools Protocol) to communicate with browsers.
+Playwright is built to work with Chromium, Firefox, and WebKit.
+For Chromium-based browsers (like Chrome and Edge), it directly uses the Chrome DevTools Protocol (CDP).
+For WebKit and Firefox, Playwright uses their own equivalent debugging protocols, but the idea is the same — it speaks to the browser using a protocol layer instead of traditional WebDriver.
+
+selenium and PW difference
+--------------------------
+
+Selenium → uses W3C WebDriver protocol to talk to browsers.
+Playwright → uses DevTools protocol (CDP and equivalents), which gives
+Faster execution (no middle server like WebDriver)
+
+More features (network interception, console logs, geolocation, permissions).
+“Playwright communicates with browsers using the Chrome DevTools Protocol (CDP) for Chromium, and equivalent protocols for Firefox and WebKit. Unlike Selenium which uses the W3C WebDriver protocol, Playwright directly talks to the browser, making it faster and more powerful.”
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------- What do you mean by Single threaded.
+
+JavaScript is **single-threaded**, meaning it executes one operation at a time, line by line, on a **single call stack**.
+Asynchronous tasks (like API calls) are handled using **event loop**, **callbacks**, **Promises**, or `async/await`
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6. What is Chrome Dev Protocol?
+
+CDP is a low-level protocol used by tools (like Playwright, Puppeteer) to control, inspect, and debug Chromium-based browsers.
+It allows direct access to browser internals like **DOM**, **network**, **console**, etc.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q6. what are the Browser Installation commands in PW.
+
+* Install Playwright with browsers:*
+  npx playwright install
+* This installs Chromium, Firefox, and WebKit browsers.
+
+* To install Playwright package:
+  npm install -D @playwright/test
+
+* To Execute Playwright code
+  npx playwright test filename.spec.ts
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. what are the different browsers supported by Playwright.
+
+"Playwright supports all major browser engines: Chromium (Chrome, Edge, Opera, Brave, etc.), WebKit (Safari), and Firefox. This ensures true cross-browser testing with a single API.”
+ Playwright is cross-browser and supports all modern rendering engines.
+
+🔹 1. Chromium-based Browsers
+
+ Google Chrome
+ Microsoft Edge
+
+Any Chromium-based browser (Brave, Vivaldi, Opera, etc.)
+
+🔹 2. WebKit
+
+Safari (Playwright runs Safari’s engine through WebKit)
+
+🔹 3. Firefox
+
+Supports Mozilla Firefox
+
+It allows **cross-browser testing** with a single codebase.
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8. explain about chromium browser.
+
+Chromium is an open-source browser project by Google, which is the base for Chrome, Edge, Opera, Brave, and others. It uses the Blink engine and V8 JavaScript engine, making it fast and reliable. Playwright uses Chromium for automation because it’s lightweight, open, and widely compatible.”
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9.  What is test function in playwright 
+
+The `test()` function is provided by the `@playwright/test` module is a test runner.
+It defines a **test case**.
+
+
+test('verify login', async ({ page }) => {
+  await page.goto('https://example.com');
+});
+
+Used with fixtures like `page`, `browser`, etc.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Q10. Explain about async/await?
+
+`async/await` is a cleaner way to handle Promises in JavaScript.
+
+* `async` keyword defines a function that returns a Promise.
+* `await` pauses execution until the Promise is resolved or rejected.
+
+
+async function getData() {
+  const response = await fetch(url);
+  console.log(response);
+}
+
+Makes asynchronous code look and behave like synchronous code.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q11. How does Playwright handle auto-waiting and retries?
+
+Playwright auto-waits for elements to become visible, enabled, and attached to the DOM.
+
+It also retries failed steps (like click or fill) until timeout is hit, reducing flakiness.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q12. What is the role of Browser, Context, and Page in Playwright?
+ 
+
+Browser: Actual browser engine (Chromium, Firefox, WebKit)
+
+Context: Isolated environment like an incognito session
+
+Page: A single tab within a context
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+

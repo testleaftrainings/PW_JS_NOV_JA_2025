@@ -1,0 +1,285 @@
+Q1: What is JavaScript, and why is it called the "language of the web"?
+
+JavaScript (JS) is a high-level, interpreted, lightweight, and dynamic programming language.
+It is primarily used to make web pages interactive and dynamic.
+It’s called the "language of the web" because it runs in all browsers without additional installation, making it the core technology for client-side interactivity.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q2: what the unique features of JS?
+
+Supports both client and server side validation
+Event driven architecture
+Asynchronous prgramming
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3: What are the different data types we have in JavaScript?
+
+Primitive data types
+Number, String, Boolean, Null, Undefined, BigInt, Symbol
+It is Stored directly in memory, immutable (e.g., let x = 5).
+
+Non-Primitive data types: Object (includes arrays, functions etc.)
+It is stored Stored as references, mutable (e.g., arrays, objects)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4.What is hoisting in JavaScript, and how does it affect Playwright test execution.
+
+Hoisting os default behaviour of JS by moving the declarations to the top their scope(Global/functional/Block) before the code is executed
+With Hoisting-JS execution has 2 phases
+1.Memory creation phase:
+Here the variables and functiones are allocated with memory.
+2.Execution phase:
+code will run line by line and values are assigned for performing operations.
+
+Types of hoisting
+1) variable hoisting
+2) function hoisting
+
+1. var
+
+var declarations are hoisted and initialized to undefined.
+So, you can access the variable before its declaration (but the value will be undefined until assignment).
+Ex:
+console.log(a); // ✅ undefined (hoisted + initialized)
+var a = 10;
+console.log(a); // 10
+
+2. let
+
+let is hoisted but not initialized.
+Exists in a Temporal Dead Zone (TDZ) from the start of the scope until the line of declaration.
+Accessing it before declaration throws a ReferenceError.
+Ex
+console.log(b); // ❌ ReferenceError (TDZ)
+let b = 20;
+console.log(b); // 20
+
+3. const
+
+Same as let → hoisted but not initialized, also in Temporal Dead Zone.
+The difference: must be initialized at the time of declaration.
+Ex:
+console.log(c); // ❌ ReferenceError (TDZ)
+const c = 30;
+console.log(c); // 30
+
+2) Function declarations are fully hoisted.
+
+This means both the function name and the function body are moved to the top of their scope.
+You can call the function before it is defined.
+
+Sample code: 
+Sayhello()
+function Sayhello(){
+    console.log("Welcome")
+    }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5: What is the difference between var, let, and const in terms of variable declaration?
+
+var: function-scoped, hoisted (initialized as undefined), allows re-declaration.
+let: block-scoped, hoisted but not initialized (temporal dead zone), can be reassigned but not re-declared.
+const: block-scoped, must be initialized at declaration, cannot be reassigned.
+
+var: redeclare ✅, reassign ✅
+let: redeclare ❌, reassign ✅
+const: redeclare ❌, reassign ❌
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q6. What is the difference between var, let, and const in terms of scoping?
+Function Scope vs Block Scope
+
+1. Function Scope (used by var)
+Variables declared with var are function-scoped.
+This means they are visible throughout the function, regardless of block {} boundaries.
+
+Example:
+
+function testFunctionScope() {
+  if (true) {
+    var x = 10;  // var is function-scoped
+  }
+  console.log(x); // ✅ Accessible here → 10
+}
+
+testFunctionScope();
+
+2. Block Scope (used by let and const)
+
+Variables declared with let and const are block-scoped.
+This means they are only accessible within the block {} where they are defined.
+
+Example:
+
+function testBlockScope() {
+  if (true) {
+    let y = 20;   // let is block-scoped
+    const z = 30; // const is also block-scoped
+  }
+  console.log(y); // ❌ Error: y is not defined
+  console.log(z); // ❌ Error: z is not defined
+}
+
+testBlockScope();
+
+var is function scoped and hoisted with undefined.
+let and const are block scoped but not initilized(In temporal dead zone-throws reference error-value cannot be accessed before initialization)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q7. What is the difference between == and === in JavScript ?
+
+1. Double Equals (==) – Loose Equality
+
+Compares only values, not types.
+If types differ, JavaScript does type coercion (tries to convert them before comparing).
+
+Ex:
+
+console.log(5 == "5");   // true  (string "5" → number 5)// converts string 5 into number and then compares).
+console.log(0 == false); // true  (false → 0)
+console.log(null == undefined); // true  (special case)
+
+2. Triple Equals (===) – Strict Equality
+
+Compares both value and type.
+No type coercion happens.
+
+Ex:
+
+console.log(5 === "5");   // false (number vs string)
+console.log(0 === false); // false (number vs boolean)
+console.log(null === undefined); // false (different types)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8. What is the difference between logical AND (&&) and OR (||) in JavaScript?
+
+1. Logical AND (&&)
+
+Returns true only if both operands are true.
+If the first operand is falsy, it returns that value immediately (short-circuiting).
+If the first operand is truthy, it returns the second operand.
+
+Ex:
+console.log(true && true);   // true
+console.log(true && false);  // false
+console.log(0 && "Hello");   // 0  (stops at first falsy)
+console.log("Hi" && "Bye");  // "Bye" (both truthy → returns last one)
+
+2. Logical OR (||)
+
+Returns true if at least one operand is true.
+If the first operand is truthy, it returns that value immediately (short-circuiting).
+If the first operand is falsy, it returns the second operand.
+
+Ex:
+console.log(true || false);  // true
+console.log(false || false); // false
+console.log(0 || "Hello");   // "Hello" (first falsy → returns second)
+console.log("Hi" || "Bye");  // "Hi" (first truthy → returns immediately)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9. what is the difference between increment and decrement operator? how does it differe with preincrement and postincrement?
+
+Increment and decrement operators are unary operators in JavaScript that are used to increase or decrease the value of a numeric variable by 1.
+
+
+Increment Operator (++)
+-----------------------
+
+Used to add 1 to the value of a variable.
+
+Example:
+
+let a = 5;
+a++;  // now a = 6
+
+
+There are two types:
+
+✔ Pre-Increment (++a)
+
+Value increases before being used.
+
+let a = 5;
+console.log(++a); // 6
+
+✔ Post-Increment (a++)
+
+Value increases after being used.
+
+let a = 5;
+console.log(a++); // 5 (but a becomes 6 after this line)
+
+
+Decrement Operator (--)
+-----------------------
+
+Used to subtract 1 from a variable.
+
+Example:
+
+let b = 10;
+b--;  // now b = 9
+
+
+There are two types:
+
+✔ Pre-Decrement (--b)
+
+Value decreases before being used.
+
+let b = 10;
+console.log(--b); // 9
+
+✔ Post-Decrement (b--)
+
+Value decreases after being used.
+
+let b = 10;
+console.log(b--); // 10 (but b becomes 9 afterward)
+
+
+Operator  Meaning	Effect
+++	Increment	Adds 1
+--	Decrement	Subtracts 1
+++a	Pre-increment	Change first, then use
+a++	Post-increment	Use first, then change
+--a	Pre-decrement	Change first, then use
+a--	Post-decrement	Use first, then change
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q10. what is the difference between switch and if_else?
+
+🔹 if...else
+
+Used when we want to check multiple conditions (ranges, comparisons, complex logic).
+Works with boolean expressions (>, <, ==, etc.).
+Flexible, but can get messy if there are many conditions.
+
+Example:
+
+let score = 85;
+
+if (score >= 90) {
+  console.log("Grade A");
+} else if (score >= 75) {
+  console.log("Grade B");
+} else {
+  console.log("Grade C");
+}
+
+🔹 switch
+
+Used when we want to compare a single value against multiple fixed options.
+Works best with discrete values (numbers, strings).
+Cleaner and more readable than a long if...else if chain.
+
+Example:
+let day = 3;
+
+switch(day) {
+  case 1: console.log("Monday"); break;
+  case 2: console.log("Tuesday"); break;
+  case 3: console.log("Wednesday"); break;
+  default: console.log("Invalid day");
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
