@@ -1,0 +1,344 @@
+Q1. what are playwright locators?
+
+✅ Playwright locators
+----------------------
+
+1) Playwright provides special locator methods that are easier and more human-friendly.
+These are smart and automatically wait for the element to be ready.
+
+2) Syntax:
+page.getByRole()
+page.getByText()
+page.getByLabel()
+page.getByPlaceholder()
+page.getByAltText()
+page.getByTitle()
+page.getByTestId()
+
+
+Note: data-testid is a stable custom HTML attribute used only for testing, so tools like Playwright can reliably locate elements.
+It does not affect the UI, styling, or functionality—even if the UI changes, this selector remains stable.
+
+3) Examples
+
+await page.getByRole('textbox',{name:'Username'}).fill('dilipkumar.rajendran@testleaf.com')
+await page.getByRole('button', { name: 'Login' }).click();
+await page.getByText('Submit').click();
+await page.getByLabel('Email').fill('test@test.com');
+await page.getByPlaceholder('Enter password').fill('Secret123');
+await page.getByAltText('Company Logo').click();
+await page.getByTitle('App Launcher',{exact:true}).click()
+<button data-testid="login-btn">Login</button>
+await page.getByTestId("login-btn");
+
+4) Best for modern testing — readable, reliable, and automatically waits for elements.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. Explain the use of "?" (optional parameter) 
+
+Ans: The ? (Optional Parameter / Property)
+ “This value is optional — you can give it or skip it.”
+ It helps your program not break even when the value is missing.
+
+✅ Example: Optional Function Parameter
+function greet(name?: string) {
+  if (name) {
+    console.log(`Hello, ${name}!`);
+  } else {
+    console.log("Hello, Guest!");
+  }
+}
+
+greet("Gauthami"); // Hello, Gauthami!
+greet();            // Hello, Guest!
+
+
+The ? after a parameter makes it optional — no error even if you don’t pass that argument.
+Without ?, the argument is required and calling the function without it will throw an error//❌ Error – Argument required.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3. What is Type Alias?
+
+A Type Alias in TypeScript is a way to create your own custom type with a name, so you can reuse it anywhere in your code.
+It makes complex types simple, readable, and reusable
+
+
+Syntax:
+------
+
+type User = {             //User is a Type Alias (or simply a custom type), It defines the shape/structure of the object.
+  name: string;
+  age: number;
+};
+
+let person: User = {    //They are variables/objects created using the User type.
+  name: "Gauthami",
+  age: 25
+};
+
+
+User → Type Alias (blueprint)
+person1 / person2 → Objects (built using that blueprint)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4. What is a union type and how do you use it?
+
+ANS: A Union Type allows a variable to hold more than one type of value.
+Instead of restricting a variable to a single type, you can say:
+
+“This variable can be of Type A or Type B.”
+It’s written using the pipe symbol |.
+
+syntax:
+-------
+
+let variable: string | number;
+Here, variable can be either a string or a number.
+
+EX1: let id: string | number;
+
+id = 101;      // ✅ number is allowed
+id = "101AB";  // ✅ string is allowed
+// id = true;  ❌ ❌ boolean is NOT allowed
+
+Here, id can accept both numbers and strings.
+
+
+Flexibility – You can allow multiple types without breaking type safety.
+Safer code – TypeScript will still check valid operations for each type.
+Common in real-world code – Especially with APIs, forms, or optional values.
+
+
+Real-Time Example: User Input
+-------------------------------
+
+Imagine you have a login system where a user can enter either their username (string) or user ID (number) to log in.
+
+type UserInput = string | number;
+
+function login(input: UserInput) {
+    if (typeof input === "string") {
+        console.log(`Logging in with username: ${input}`);
+    } else {
+        console.log(`Logging in with user ID: ${input}`);
+    }
+}
+
+login("gauthami123"); // Logging in with username: gauthami123
+login(1024);          // Logging in with user ID: 1024
+
+
+✅ Why this is useful:
+
+The function can handle different kinds of input without creating separate functions.
+Union type makes the code flexible and type-safe.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5.What is intersection type and how do you use it?
+
+An Intersection Type combines multiple types into one.
+A variable or object must satisfy all the types at the same time.
+
+It’s written using the '&' symbol.
+
+Syntax:
+1) type A = { name: string };
+type B = { age: number };
+
+type Person = A & B; // Intersection
+Person must have both name (string) and age (number).
+
+let person:Person={
+    name: "Sujeevan",
+    age: 30
+}
+
+// to print the object
+console.log(person);   //Sujeevan, 30
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q6.Difference between `any`, `unknown`?
+
+Ans: these are the dataTypes available in Typescript
+
+1) any
+
+Definition: any allows any type of value.
+TypeScript stops checking type safety for that variable.
+
+let value: any;
+
+value = 10;
+value = "Hello";
+value = true;
+
+console.log(value); // ✅ Works, TypeScript allows everything
+
+Pros: Very flexible
+Cons: No type safety → can lead to runtime errors
+
+2) unknown
+
+Definition:unknown also allows any type, but TypeScript forces you to check the type before using it.
+Safer than any.
+
+EX:
+let value: unknown;
+
+value = 10;
+value = "Hello";
+
+// console.log(value.toUpperCase()); // ❌ Error: Object is of type 'unknown'
+
+// Type check needed
+if (typeof value === "string") {
+  console.log(value.toUpperCase()); // ✅ Works
+}
+
+Pros: Flexible and type-safe
+Cons: Need to do type checks before using
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. What are alerts and How do you handle simple, confirmation and prompt alerts in Playwright?
+
+In web applications, alerts are pop-up dialog boxes that appear on the browser to get user attention or input.
+
+a) Modal alerts(not inspectable)
+--------------------------------
+
+1) simple-ok
+2) confirmation-ok and cancel
+3) prompt-ok, cancel and input textbox
+
+
+b) Non modal alerts
+
+1) Sweet-dismiss(inspectabe)
+----------------------------
+
+Playwright provides the page.on('dialog') event to handle any type of dialog.
+
+syntax:
+
+ page.on('dialog', async (dialog) => {
+  console.log(dialog.message()); // prints alert message
+  await dialog.accept();         // clicks OK
+  // or await dialog.dismiss();  // clicks Cancel
+});
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8. what is the difference between page.on and page.once?
+
+Page.on:
+--------
+page.on('dialog', callback)
+The callback will run every time a dialog appears, whether it’s a simple alert, confirmation, or prompt.
+So if your page triggers 3 alerts one after another, the callback executes 3 times, once for each alert.
+
+Syntax: 
+-------
+page.on('dialog', async dialog => {
+console.log('Dialog type:', dialog.type()); // alert, confirm, or prompt
+await dialog.dismiss(); // dismiss all dialogs
+});
+
+
+page.once:
+----------
+
+page.once('dialog', callback)
+The callback will run only for the first dialog that appears, regardless of type.
+After handling that first alert, it automatically stops listening.
+
+Syntax:
+-------
+page.once('dialog', async dialog => {
+    console.log('First dialog type:', dialog.type());
+    await dialog.accept(); // only handles the first dialog
+});
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9. what are frames and how do you interact with frames?
+
+1) In a web page, a frame is basically an embedded HTML document inside another HTML document. There are two common types:
+
+<iframe> (inline frame)
+Most common type of frame.
+It loads another webpage or content inside the main page.
+<frame> / <frameset> (old, less common)
+Used in legacy websites, not recommended today.
+
+Syntax:
+
+page.frames()-> frames() method helps to get the collection of frames that is present in a webpage.
+page.frameLocator(selector) → Locates elements inside a frame (recommended).
+page.frame({ name | url | index }) → Gets the frame object to interact with.
+
+In playwright, main page is also considered as frame and index starts from '0'
+
+2) Why frames matters in automation
+
+Since frames have their own DOM, normal page locators like page.locator() won’t work directly inside a frame.
+You need to switch context to the frame to interact with its elements.
+
+3) How to interact with frames in Playwright
+
+we can interact with frames using 
+
+a)By name or ID
+const frame = page.frame({ name: 'myFrame' });
+
+
+b) By URL
+const frame = page.frame({ url: /example.com/ });
+
+
+e) By element handle
+
+const frameElement = await page.locator('#myFrame');
+const frame = await frameElement.frame();
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. What is the difference between `page.frame()` and `frameLocator()`?
+
+
+page.frame()
+------------
+Returns a Frame object, representing a specific <iframe> inside the page.
+
+Definition:
+const frame = page.frame({ name: 'iframe-name' });
+
+
+Parameters:
+name: Name of the iframe
+url: URL of the iframe (can use regex)
+Or any other frame identification
+
+Usage: You can then call methods like fill(), click(), locator() on the frame object.
+
+Example:
+
+const frame = page.frame({ name: 'myFrame' });
+if (frame) {
+  await frame.fill('#username', 'JohnDoe');
+  await frame.click('button[type="submit"]');
+}
+
+page.frameLocator()
+-------------------
+Returns a FrameLocator object, which allows locator-based interaction inside a frame.
+
+Definition:
+const frameLocator = page.frameLocator('#iframe-selector');
+
+You can chain locators to interact with elements inside the iframe. Works well for nested frames.
+
+Example:
+
+const frameLocator = page.frameLocator('#myFrame');
+await frameLocator.locator('#username').fill('JohnDoe');
+await frameLocator.locator('button[type="submit"]').click();
+s
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
