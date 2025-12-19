@@ -1,0 +1,409 @@
+Q1: How do you handle windows in playwright?
+
+Window Handling
+-------------
+
+Window Handling is Managing/ Switching between multiple page objects (new tabs or browser windows) opened by the application within the same browser context.
+
+Types:
+
+Sequential Approach
+-------------------
+Sequential approach means handling multiple browser windows or tabs one after another in the order they open, by waiting for each new Page object and performing 
+actions step-by-step.
+
+const newPage = context.waitForEvent('page') // Pending  // Step 1 : Listener open
+await page.locator(`//div[contains(text(),"MOTOROLA g35 5G")]`).click();  // Step 2 : Click action/Click Event
+const childPage =   await newPage  // Step3 : Resolving the promise //The page is captured by this time// Promise is resolved ones playwright has captured the newPage
+that got launched
+
+Note: Simpler but may risk of missing the event if the page opens too quickly.
+----
+
+
+Concurrent Approach (Recommended)
+-------------------
+
+Concurrent approach in Playwright uses Promise.all() to wait for the popup and the triggering action simultaneously, ensuring reliable window handling without race 
+conditions.
+
+
+const [newPage] = await Promise.all([
+  context.waitForEvent('page'),
+  actionThatOpensNewPage()
+]);
+
+const [childPage] = await Promise.all([context.waitForEvent('page'),page.locator(`//div[text()="POCO C71 (Desert Gold, 64 GB)"]`).click()])
+
+**Ensures you never miss the page event.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. How do you close a child window and return to the parent?
+
+Switch between pages using:
+--------------------------
+
+context.pages();       // Returns all open pages in the context
+newPage.bringToFront(); // Focus a specific page
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3. How does Playwright handle file downloads?
+
+
+# File Download
+----------------
+
+Handling files downloaded by the application (clicking "Download" links/buttons).
+
+### **Usage**
+
+Playwright provides a `page.waitForEvent('download')` listener.
+
+
+// using promise.all along with event listener
+
+const [download] = await Promise.all([
+  page.waitForEvent('download'),      // Wait for download event
+  page.click('text=Download Report')  // Trigger download
+]);
+
+// Save to desired path
+await download.saveAs('downloads/report.pdf');
+
+// Get file path in temp location
+console.log(await download.path());
+
+-------------------------------------------------------------------------------------
+
+//Using Event Listener
+await page.goto('https://leafground.com/file.xhtml')  
+
+const filePromise=page.waitForEvent("download")  
+
+await page.getByText('Download',{exact:true}).click()
+
+const fDown=await filePromise //resolve the promise, once download action is completed
+
+//option 1- download and store in created folder
+------------------------------------------------
+
+await fDown.saveAs("Data/sepPW.png")//setting the Path to download a file and save it
+
+await page.waitForTimeout(2000)
+
+await fDown.saveAs(fDown.suggestedFilename())//save under root directory with suggested filename
+
+await fDown.saveAs(`Data/${fDown.suggestedFilename()}`)//save under data folder with suggested filename
+
+//option 2-using absolute path
+-------------------------------
+
+await fDown.saveAs(path.join(__dirname,'../Data/',fDown.suggestedFilename()))    //original filename
+
+    
+//option 3-store in local machine
+---------------------------------
+
+await fDown.saveAs('C:/Users/admin/OneDrive - TestLeaf Software Solutions Private Limited/Documents/filedownload')
+await page.waitForTimeout(2000)
+})
+
+
+* Default: Playwright saves downloads in a temporary directory.
+* Always use `Promise.all` to avoid missing the download event.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q4. How can you verify the downloaded file name?
+
+Compare expected vs received filename.
+
+const expectedText = "report.pdf";
+const receivedText = downloader.suggestedFilename();
+
+expect(expectedText).toBe(receivedText);
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5. How do you capture and validate the file name being downloaded?
+
+import fs from "fs";
+
+const filePath = "data/report.pdf";
+if (fs.existsSync(filePath)) {
+  console.log("File is downloaded");
+} else {
+  console.log("File is not downloaded");
+}
+
+
+//Use fs module to check file existence.
+if (fs.existsSync(filePath)) {}->Checks synchronously if the file exists at the given path
+Returns:
+true → file exists
+false → file does not exist
+
+//existsSync blocks execution until check is done
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Q6. How do you download a file and save it to a custom path?
+
+Use saveAs() to store file in a specific location.
+
+import os from "os";
+
+const fileDownloader = page.waitForEvent("download");
+await page.locator('//span[text()="Select File & Download"]').click();
+const downloader = await fileDownloader;
+
+await downloader.saveAs(`${os.homedir()}/Downloads/${downloader.suggestedFilename()}`);
+
+-------------------------------------------------------------------------------------------------------
+
+Q7. How to automate file uploads using Playwright?
+
+Case 1: With <input type="file">
+
+await page.locator('input#fileUpload').setInputFiles("./Data/report.pdf");
+
+
+Case 2: Without <input type="file"> (using FileChooser)
+
+const fileUploader = page.waitForEvent("filechooser"); // promise
+await page.locator('#uploadButton').click(); // trigger file chooser
+(await fileUploader).setFiles("./Data/logindata.json");
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q8. Can you upload multiple files?
+
+Yes, if <input type="file" multiple /> is present.
+
+const fileUploader = page.waitForEvent("filechooser");
+await page.locator('#uploadButton').click();
+(await fileUploader).setFiles(["./Data/logindata1.json", "./Data/logindata2.json"])
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q9. what is Data parameterization in Playwright and different ways to read the file?
+
+Data Parameterization means feeding test data from external files instead of hardcoding values.
+Useful for **data-driven testing**.
+
+1) Reading Data from (.env, .json, .csv Files)
+
+Utilizing .env files for environment-specific data.
+Reading and processing JSON files for dynamic test data.
+Handling .csv files for bulk data-driven tests.
+
+### **Definition**
+JSON --> JavaScript Object Notation.
+
+Syntax:
+1. Sample JSON (testData.json):
+[
+  {
+    "TcaseId": "TC001",
+    "Username": "demoSalesManager",
+    "Password": "crmsfa"
+  },
+  { 
+    "TcaseId": "TC002",
+    "Username": "demoCSR",
+    "Password": "crmsfa"
+  } 
+]
+
+Step 1:
+Create a .json file under Data folder
+Step 2:
+Create a .spec.ts and import data from json file similar to the sample script.
+Step 3:
+Use the imported data in your test cases for validation.    
+Step 4:
+Run the test to see data-driven testing in action. 
+
+
+sample code:
+------------
+import {test} from "@playwright/test"
+import credentials from "../constants/login.json";
+
+test.describe.serial(`login tests in serial mode`,async()=>{  //used to read the data serially one by one
+
+    for(let data of credentials){     //used to read the data parallely and it is parallel by default
+        test(`Read data from Json ${data.TestcaseID}`,async ({page}) => {   //template literal is used with unique ID and it is dynamic orelse it will throw duplicate error as both TC will have same title
+            await page.goto("http://leaftaps.com/opentaps/control/main")
+            await page.locator("#username").fill(data.Username)
+            await page.locator("#password").fill(data.Password)
+            await page.locator(".decorativeSubmit").click()
+            
+        })
+        } 
+   })
+
+--------------------------------------------------------------------------------------------------------------------
+2)  Data Parameterization with CSV
+---
+### **Definition**
+CSV --> Comma Seperated Values.
+
+Reading test data from CSV files and running tests with multiple data sets.
+CSV is widely used in organizations for bulk test data (rows = test cases, columns = input fields).
+
+Usage
+1. Sample CSV (testData.csv):
+
+tcid,username,password
+1,demoSalesManager,crmsfa
+2,demoCSR,crmsfa
+
+Step 1:
+Install csv : command - npm install csv-parse.
+
+Step 2:
+Create a .csv file under Data folder.
+
+Step 3:
+Create a .spec.ts and import data from csv file similar to the sample script.
+
+Step 3:
+Use the imported data in your test cases for validation.  
+
+Step 4:
+Run the test to see data-driven testing in action.
+
+sample code:
+------------
+
+import test from '@playwright/test'
+import { parse } from 'csv-parse/sync'
+import fs from 'fs'
+import path from 'path'
+
+//CSV-comma separated value, light weight
+//instal csv- npm install csv-parse// 
+//fs-file system/file stream, need to be imported form fs-file to get all the values from CSV
+
+path.join()
+-----------
+Comes from Node.js’s built-in path module.
+It is used to safely combine multiple parts of a file path.
+It automatically adds / or \ depending on your operating system (Windows, macOS, Linux).
+
+//fs is the File System module in Node.js that allows us to work with files.
+//readFileSync reads a file synchronously, meaning the code waits until the file is completely read before moving to the next line.
+//parse converts CSV text data into JavaScript objects that can be easily used in code.
+//__dirname represents the directory path of the current file where the code is written.
+
+//method 1 (Absolute Path)
+ constants\loginCredentials.csv
+ const loginData:any[]=parse(fs.readFileSync(path.join(__dirname,"../constants/loginCredentials.csv")),{
+     columns:true,
+     skip_records_with_empty_values:true
+ })
+
+//method 2(Relative Path)
+const loginData: any=parse(fs.readFileSync("constants/loginCredentials.csv"),{columns: true,skip_empty_lines: true})
+
+
+//To read datas from CSV file 
+test.describe.serial(`read data serially`,async()=> {
+    
+
+for (let data of loginData){
+test(`Read data from CSV ${data.TestCaseId}`,async ({page}) => {
+        await page.goto("http://leaftaps.com/opentaps/control/main")
+        await page.locator("#username").fill(data.Username)
+        await page.locator("#password").fill(data.Password)
+        await page.locator(".decorativeSubmit").click()
+    })
+}
+})
+-------------------------------------------------------------------------------------------------------------------------------------
+
+# Data Parameterization with ENV
+---
+### **Definition**
+
+A .env file (short for environment file) is a simple text file used to store environment variables in the form of key-value pairs.
+
+It is commonly used in projects to separate configuration data (like URLs, API keys, database credentials, secrets) from the actual application code.
+
+Usage
+1. Sample ENV (config.env): 
+APP_URL=https://example.com
+USERNAME=demoUser
+PASSWORD=securePass123
+
+
+Step 1:
+Install dotenv : command - npm install dotenv.
+Step 2:
+Create a .env file under Data folder.
+Step 3:
+Create a .spec.ts and import data from env file similar to the sample script. 
+Step 4:
+Use the imported data in your test cases for validation.
+Step 5:
+Run the test to see data-driven testing in action.
+
+sample code:
+------------
+
+import {test} from "@playwright/test"
+import dotenv from "dotenv"
+//process.env.variable
+//process-> environment variable
+//let filename=process.env.envFile||'qa'
+
+dotenv.config({path:'../utils/Qa.env'})
+test('login with env',async({page})=>{
+    let username=process.env.LF_Username as string
+    let password=process.env.LF_Password as string
+
+    await page.goto("http://leaftaps.com/opentaps/control/main")
+        await page.fill("#username",username)
+        await page.fill("#password",password)
+        await page.locator(".decorativeSubmit").click()
+
+})
+
+
+✅ set env file in ur terminal 
+
+//set the Env file -> $env:envFile="Qa"
+
+//unset -> $env:envFile=""
+
+//check the env-> $env:envFile
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q10. What is `storageState` in Playwright?
+
+Each Playwright test runs in a fresh browser context, so if the login session is lost and you must log in again for every test. 
+Using storageState this problem can be bypassed by saving the login state (such as cookies and tokens) into a JSON file and loading that file in future tests to skip the login steps.
+
+Step 1: Save login state after login
+import { test, expect } from '@playwright/test';
+
+test('Login and save storage state', async ({ page }) => {
+  await page.goto('https://example.com/login');
+  await page.fill('#username', 'admin');
+  await page.fill('#password', 'Admin@123');
+  await page.click('button[type="submit"]');
+
+  // Save session to a file
+  await page.context().storageState({ path: 'auth.json' });
+});
+
+
+This will create a file named auth.json containing cookies and local storage data.
+
+
+use the below test.use prpoerty in spec.ts to skip the Login
+-------------------------------------------------------------
+
+test.use({
+
+storageState: 'path: 'auth.json'
+})
