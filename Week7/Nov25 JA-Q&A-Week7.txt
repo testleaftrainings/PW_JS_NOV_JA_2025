@@ -1,0 +1,423 @@
+Q1. Why is Jira integration important in an automation ecosystem?
+
+Jira is an issue-tracking and project management tool by Atlassian used to manage bugs, tasks, and Agile workflows in software projects.
+
+Jira integration is important because it connects automated test execution with defect tracking, ensuring faster reporting, better traceability, and improved 
+collaboration between QA, developers, and stakeholders
+
+Jira integration provides:
+--------------------------
+
+1. End-to-end traceability
+----------------------------
+Requirement → Test Case → Automation → Execution Report → Defect
+Makes audits and reviews easy
+
+2. Automatic defect reporting
+-------------------------------
+Failed tests can automatically raise Jira tickets with logs/screenshots.
+No manual defect logging
+Saves time and avoids missing defects
+
+3. Improved collaboration
+--------------------------
+Developers, QA, and managers track the same source of truth.
+No email or Excel tracking
+
+4. Faster Feedback to Developers 
+--------------------------------
+Developers get immediate visibility of failures
+Includes logs, screenshots, stack traces
+Reduces defect turnaround time
+
+5. Supports CI/CD Pipelines 
+-----------------------------
+
+Automation runs in Jenkins / GitHub Actions
+Failures are pushed to Jira automatically
+Enables continuous testing
+
+6. Single Source of Truth 
+--------------------------
+
+Jira becomes the central system
+All work items, bugs, and test results are visible in one place
+
+
+Summary
+-------
+
+Automation Test → Fails
+↓
+Screenshot + Logs captured
+↓
+Bug created in Jira automatically
+↓
+Developer fixes
+↓
+Test reruns and closes bug
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q2. How do you automatically create Jira bugs from Playwright test failures?
+
+
+In an automation ecosystem, failed tests are captured by a post-test hook, and their details (name, error, logs) are automatically sent to Jira via REST API, 
+creating bugs without manual intervention.
+
+
+Automated Test → Fails → Capture Details(summary, dexcription,logs and reports) → Call Jira API → Bug Created → Confirmation
+
+
+Automatic Bug Reporting to Jira: Automation is done using Jira REST APIs integrated in the test reporter.
+--------------------------------
+
+Test Execution
+--------------
+
+Automated tests are executed for the application.
+Each test produces a result: passed, failed, or timed out.
+
+Capture Test Outcome
+--------------------
+
+After a test finishes, a test result object is available.
+This object contains:
+Test status
+Test name or title
+Error messages or exceptions through Playwright reporters
+Error message
+Screenshot
+Trace file
+Test name
+
+After-Test Hook
+----------------
+
+A post-test hook or listener checks the status of the test automatically.
+Only failed or timed-out tests are considered for reporting.
+
+Prepare Bug Details
+--------------------
+
+The script prepares bug information:
+Title / Summary: identifies the failed test
+Description: includes error message, logs, or screenshots
+
+Call Jira API
+-------------
+
+1) Build a REST API request:
+
+POST /rest/api/3/issue
+
+2) Payload includes:
+Summary
+Description
+Severity
+Attachments
+Optionally attach files via:
+
+/rest/api/3/issue/{issueId}/attachments
+
+Using Jira REST API:
+The script authenticates with project credentials
+Sends a POST request with the bug details
+Jira automatically creates a new issue of type “Bug”
+
+Confirmation / Logging
+----------------------
+
+Trigger this automatically inside a custom reporter so every failure generates or updates a Jira issue.
+This creates a seamless defect tracking pipeline.
+
+Logs are printed or stored to confirm that the Jira bug was created.
+This provides traceability for QA and developers.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q3. What is the difference between a class and an object in TypeScript?
+
+- Class → Blueprint/template that defines properties and methods.
+- Object → Instance of a class containing actual data.
+
+In Playwright, classes often represent pages in POM. Objects are created for page instances in tests.
+
+Example:
+export class BrowserSetup {     //class
+  private browserName: string;
+  constructor(name: string) {
+    this.browserName = name;
+  }
+  async launchBrowser() {
+    console.log(`Launching browser: ${this.browserName}`);
+  }
+}
+const chrome = new BrowserSetup('Chrome');  //object
+chrome.launchBrowser();
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q4. What are Access Modifiers in TypeScript?
+
+- public → Accessible from anywhere.
+- private → Accessible only within the class.=> Use getter/setter to read/modify.
+- protected → Accessible within class and subclasses.
+
+⭐ Access Modifiers in TypeScript
+
+TypeScript provides three access modifiers to control the visibility of class members (variables/methods).
+
+1️. public (default)
+
+Accessible everywhere
+From inside the class
+Outside the class
+From child classes
+
+If no modifier is written, it is public by default.
+
+Example:
+--------
+
+class LoginPage {
+  public username = '#username';
+
+  public enterUsername() {
+    console.log("Typing username");
+  }
+}
+
+
+2️. private
+
+Accessible only within the same class
+Not accessible outside the class
+Not inherited by child classes
+
+Used for:
+Sensitive locators
+Internal helper methods
+Preventing UI classes from direct manipulation
+
+Example:
+--------
+
+class LoginPage {
+  private password = '#password';
+
+  private logAction() {
+    console.log("Action logged");
+  }
+}
+
+
+Attempting to access privately:
+
+const pageObj = new LoginPage();
+pageObj.password;  // ❌ Error
+
+
+3️. protected
+
+Accessible within the same class
+Also accessible in child classes (inherited)
+Not accessible outside class hierarchy
+Useful for base classes in Playwright.
+
+Example:
+--------
+
+class BasePage {
+  protected baseUrl = 'https://example.com';
+
+  protected navigate(page) {
+    return page.goto(this.baseUrl);
+  }
+}
+
+class LoginPage extends BasePage {
+  goToLogin(page) {
+    return this.navigate(page); // ✔ allowed
+  }
+}
+
+
+But:
+
+const obj = new BasePage();
+obj.baseUrl; // ❌ Error: cannot access protected outside class
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q5.What is an constructor?
+
+A constructor is a special method in a class that is automatically called when a new object of that class is created.
+It is used to initialize the object’s properties.
+Every class can have only one constructor.
+
+
+class Person {
+  name: string;
+  age: number;
+
+  constructor(name: string, age: number) { // Constructor
+    this.name = name; // Initialize properties
+    this.age = age;
+  }
+
+  greet() {
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old.`);
+  }
+}
+
+// Creating an object calls the constructor automatically
+const person1 = new Person("Hema", 28);
+person1.greet(); 
+
+// Output: Hello, my name is Hemaand I am 28 years old.
+
+
+A constructor in TypeScript is a special method in a class that initializes object properties when the object is created.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q6. What is Inheritance in TypeScript?
+
+Inheritance lets a class inherit properties/methods from another class using `extends`.
+Promotes code reuse and reduces duplication
+
+Types of Inheritance Allowed in TypeScript:
+-------------------------------------------
+
+TypeScript supports only single inheritance directly, but using classes, interfaces, and composition you can achieve multiple forms of inheritance.
+
+1️.Single Inheritance (Supported)
+---------------------------------
+
+One class inherits from one parent class using extends.
+class Parent {}
+class Child extends Parent {}
+Directly supported in TypeScript.
+
+2️. Multilevel Inheritance (Supported)
+------------------------------------
+
+A → B → C chain.
+
+class A {}
+class B extends A {}
+class C extends B {}
+Supported because each class extends only one parent.
+
+3️. Hierarchical Inheritance (Supported)
+----------------------------------------
+
+One parent, many children.
+
+class Parent {}
+class Child1 extends Parent {}
+class Child2 extends Parent {}
+Supported.
+
+
+4️. Multiple Inheritance (NOT supported for classes)
+----------------------------------------------------
+
+You cannot extend more than one class.
+Not allowed:
+class Child extends Parent1, Parent2 {} // Error
+But, In TypeScript can achieve multiple inheritance through interfaces.
+
+interface A { a(): void; }
+interface B { b(): void; }
+
+class C implements A, B {
+  a() {}
+  b() {}
+}
+
+Allowed via interfaces, not classes.
+
+
+5️. Hybrid Inheritance (Partially supported)
+-------------------------------------------
+
+Combination of two or more types (e.g., hierarchical + multiple).
+TypeScript supports hybrid via interfaces, but not using multiple parent classes.
+
+Summary:
+-------
+
+1. TypeScript supports:
+
+Single inheritance
+Multilevel inheritance
+Hierarchical inheritance
+Multiple inheritance via interfaces (not via classes)
+Hybrid inheritance via interfaces
+
+2. TypeScript does NOT support:
+
+Multiple inheritance using classes
+TypeScript supports single, multilevel, and hierarchical inheritance through classes, and it supports multiple and hybrid inheritance through interfaces, but not through classes.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7. How is `this` used in classes?
+
+'this' refers to current instance of the class.
+Used to access properties/methods of that instance.
+
+Example:
+export class LoginPage {
+  constructor(private page: Page) {}
+  async login(username: string, password: string) {
+    await this.page.fill('#username', username);
+    await this.page.fill('#password', password);
+    await this.page.click('#loginButton');
+  }
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8. What is the Page Object Model and why is it beneficial in UI automation?
+
+POM is a design pattern that separates UI locators and interactions into dedicated page classes, instead of embedding them in tests.
+
+Benefits:
+---------
+
+Reduces code duplication
+Makes tests readable and maintainable
+Centralizes all UI changes
+Encourages reusable and modular test architecture
+Hides complexity from test files
+Supports abstraction & clean layering
+
+
+  POM (Page Object Model) in Playwright
+==============================
+
+1. What is POM?
+
+Design pattern where each page = class with locators + methods.
+Improves:
+- Maintainability
+- Readability
+- Reusability
+
+------------------------------
+
+2. Why use BasePage in POM?
+
+BasePage stores reusable methods like:
+- click()
+- fill()
+- navigate()
+
+This avoids repeating in every page class.
+
+------------------------------
+
+3. How to handle locators in POM?
+
+- Store all locators inside page class as properties/methods.
+- Update in one place → tests unaffected.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
